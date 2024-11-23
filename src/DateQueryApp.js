@@ -177,7 +177,6 @@ const DateQueryApp = () => {
         )}
       </div>
       <div style={{ marginTop: "40px", textAlign: "center" }}>
-        <h3 style={{ color: "#555" }}>Take a Break with Tic-Tac-Toe!</h3>
         <TicTacToe />
       </div>
     </div>
