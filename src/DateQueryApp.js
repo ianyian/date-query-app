@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
 import dsData from "./ds.csv";
+import TicTacToe from "./TicTacToe";
 
-// Using environment variable for build version
-const buildVersion = process.env.REACT_APP_BUILD_VERSION;
+const buildTimestamp = "Build Version: " + new Date().toLocaleString();
 
 const DateQueryApp = () => {
   const [date, setDate] = useState({
@@ -85,7 +85,7 @@ const DateQueryApp = () => {
           color: "#666",
         }}
       >
-        {buildVersion}
+        {buildTimestamp}
       </div>
       <h2 style={{ textAlign: "center", color: "#333" }}>Date Query App</h2>
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
@@ -175,6 +175,10 @@ const DateQueryApp = () => {
             ))}
           </ul>
         )}
+      </div>
+      <div style={{ marginTop: "40px", textAlign: "center" }}>
+        <h3 style={{ color: "#555" }}>Take a Break with Tic-Tac-Toe!</h3>
+        <TicTacToe />
       </div>
     </div>
   );
