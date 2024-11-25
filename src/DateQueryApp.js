@@ -134,46 +134,52 @@ const DateQueryApp = () => {
         <h3 style={{ color: "#007bff", fontSize: "20px", fontWeight: "bold" }}>
           Match Results
         </h3>
-        {result.data.length === 0 ? (
+        {result.data.length === 0 &&
+        dates.date1 === "" &&
+        dates.date2 === "" ? (
+          <p style={{ color: "#007bff", fontSize: "18px", fontWeight: "bold" }}>
+            Ready to go
+          </p>
+        ) : result.data.length === 0 ? (
           <p style={{ color: "#ff6347", fontSize: "18px", fontWeight: "bold" }}>
             No matching data found
           </p>
-        ) : (
-          <ul
-            style={{
-              listStyleType: "none",
-              padding: 0,
-              textAlign: "left",
-              margin: "20px 0",
-            }}
-          >
-            {result.data.map((item, index) => (
-              <li
-                key={index}
-                style={{
-                  backgroundColor: "#f0f8ff",
-                  margin: "10px 0",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <div>
-                  <strong>Value 1:</strong> {item.value1}
-                </div>
-                <div>
-                  <strong>Value 2:</strong> {item.value2}
-                </div>
-                <div>
-                  <strong>Value Z:</strong> {item.ValueZ}
-                </div>
-                <div>
-                  <strong>Relationship:</strong> {item.Relationship}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        ) : null}
+
+        <ul
+          style={{
+            listStyleType: "none",
+            padding: 0,
+            textAlign: "left",
+            margin: "20px 0",
+          }}
+        >
+          {result.data.map((item, index) => (
+            <li
+              key={index}
+              style={{
+                backgroundColor: "#f0f8ff",
+                margin: "10px 0",
+                padding: "15px",
+                borderRadius: "8px",
+                boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <div>
+                <strong>Value 1:</strong> {item.value1}
+              </div>
+              <div>
+                <strong>Value 2:</strong> {item.value2}
+              </div>
+              <div>
+                <strong>Value Z:</strong> {item.ValueZ}
+              </div>
+              <div>
+                <strong>Relationship:</strong> {item.Relationship}
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
       <div style={{ marginTop: "40px", textAlign: "center" }}>
         {!showGame.tictactoe && (
