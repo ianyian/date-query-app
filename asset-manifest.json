@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/date-query-app/static/css/main.e6c13ad2.css",
-    "main.js": "/date-query-app/static/js/main.db0662cb.js",
-    "static/media/ds.csv": "/date-query-app/static/media/ds.47ed9a808d25dd02481c.csv",
+    "main.js": "/date-query-app/static/js/main.c5ed7754.js",
     "index.html": "/date-query-app/index.html",
+    "static/media/ds.csv": "/date-query-app/static/media/ds.d6e77a07350ba8b6a70c.csv",
     "main.e6c13ad2.css.map": "/date-query-app/static/css/main.e6c13ad2.css.map",
-    "main.db0662cb.js.map": "/date-query-app/static/js/main.db0662cb.js.map"
+    "main.c5ed7754.js.map": "/date-query-app/static/js/main.c5ed7754.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.db0662cb.js"
+    "static/js/main.c5ed7754.js"
   ]
 }
