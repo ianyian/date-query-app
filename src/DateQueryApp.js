@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Papa from "papaparse";
 import dsData from "./ds.csv";
 import TicTacToe from "./TicTacToe";
@@ -6,16 +6,33 @@ import TicTacToe from "./TicTacToe";
 const buildTimestamp = "Build Version: " + new Date().toLocaleString();
 
 const DateQueryApp = () => {
-  const [date, setDate] = useState({
-    year: "2024",
-    month: "January",
-    day: "1",
-  });
-  const [result, setResult] = useState("ready to go");
+  const [dates, setDates] = useState({ date1: "", date2: "" });
+  const [result, setResult] = useState({ data: [] });
+  const [date1Options, setDate1Options] = useState([]);
+  const [date2Options, setDate2Options] = useState([]);
+  const [showGame, setShowGame] = useState({ tictactoe: false });
+
+  useEffect(() => {
+    // Parse CSV on initial load to populate dropdown options
+    Papa.parse(dsData, {
+      download: true,
+      header: true,
+      complete: (result) => {
+        const data = result.data;
+        const uniqueDate1 = Array.from(new Set(data.map((item) => item.date1)));
+        const uniqueDate2 = Array.from(new Set(data.map((item) => item.date2)));
+        setDate1Options(uniqueDate1);
+        setDate2Options(uniqueDate2);
+      },
+      error: (error) => {
+        console.error("Error parsing CSV:", error);
+      },
+    });
+  }, []);
 
   const handleInputChange = (event, dateType) => {
     const value = event.target.value;
-    setDate({ ...date, [dateType]: value });
+    setDates({ ...dates, [dateType]: value });
   };
 
   const handleSubmit = () => {
@@ -26,41 +43,22 @@ const DateQueryApp = () => {
         const data = result.data;
         console.log("Parsed Data:", data); // Log the parsed data to verify it's correct
 
-        const monthMap = {
-          January: "01",
-          February: "02",
-          March: "03",
-          April: "04",
-          May: "05",
-          June: "06",
-          July: "07",
-          August: "08",
-          September: "09",
-          October: "10",
-          November: "11",
-          December: "12",
-        };
-
-        const targetDateString = `${date.year}${monthMap[date.month]}${String(
-          date.day
-        ).padStart(2, "0")}`;
-
-        // Assuming the csv file has a date column named 'date' in the format 'YYYYMMDD'
+        // Assuming the csv file has columns named 'date1' and 'date2'
         const filteredData = data.filter((item) => {
-          if (item.date) {
-            const itemDateString = item.date.trim();
-            return itemDateString === targetDateString;
-          }
-          return false;
+          return item.date1 === dates.date1 && item.date2 === dates.date2;
         });
 
         console.log("Filtered Data:", filteredData); // Log filtered data to check if the filtering is working
-        setResult(filteredData.length > 0 ? filteredData : "No data found");
+        setResult({ data: filteredData.length > 0 ? filteredData : [] });
       },
       error: (error) => {
         console.error("Error parsing CSV:", error);
       },
     });
+  };
+
+  const toggleGame = () => {
+    setShowGame((prevState) => ({ tictactoe: !prevState.tictactoe }));
   };
 
   return (
@@ -87,54 +85,32 @@ const DateQueryApp = () => {
       >
         {buildTimestamp}
       </div>
-      <h2 style={{ textAlign: "center", color: "#333" }}>Date Query App</h2>
+      <h2 style={{ textAlign: "center", color: "#333" }}>Data Match</h2>
       <div style={{ marginBottom: "20px", textAlign: "center" }}>
-        <h3 style={{ marginBottom: "10px", color: "#555" }}>Select Date</h3>
+        <label style={{ marginRight: "10px", color: "#555" }}>Person 1:</label>
         <select
-          value={date.year}
-          onChange={(e) => handleInputChange(e, "year")}
+          value={dates.date1}
+          onChange={(e) => handleInputChange(e, "date1")}
           style={{ marginRight: "10px", padding: "5px" }}
         >
-          {Array.from({ length: 2024 - 1970 + 1 }, (_, i) => 1970 + i).map(
-            (year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            )
-          )}
-        </select>
-        <select
-          value={date.month}
-          onChange={(e) => handleInputChange(e, "month")}
-          style={{ marginRight: "10px", padding: "5px" }}
-        >
-          {[
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
-          ].map((month) => (
-            <option key={month} value={month}>
-              {month}
+          <option value=''>Select Date 1</option>
+          {date1Options.map((date, index) => (
+            <option key={index} value={date}>
+              {date}
             </option>
           ))}
         </select>
+
+        <label style={{ marginRight: "10px", color: "#555" }}>Person 2:</label>
         <select
-          value={date.day}
-          onChange={(e) => handleInputChange(e, "day")}
+          value={dates.date2}
+          onChange={(e) => handleInputChange(e, "date2")}
           style={{ padding: "5px" }}
         >
-          {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
-            <option key={day} value={day}>
-              {day}
+          <option value=''>Select Date 2</option>
+          {date2Options.map((date, index) => (
+            <option key={index} value={date}>
+              {date}
             </option>
           ))}
         </select>
@@ -155,29 +131,80 @@ const DateQueryApp = () => {
         Submit
       </button>
       <div style={{ marginTop: "20px", textAlign: "center" }}>
-        <h3 style={{ color: "#555" }}>Results</h3>
-        {typeof result === "string" ? (
-          <p style={{ color: "#007bff" }}>{result}</p>
+        <h3 style={{ color: "#007bff", fontSize: "20px", fontWeight: "bold" }}>
+          Match Results
+        </h3>
+        {result.data.length === 0 ? (
+          <p style={{ color: "#ff6347", fontSize: "18px", fontWeight: "bold" }}>
+            No matching data found
+          </p>
         ) : (
-          <ul style={{ listStyleType: "none", padding: 0 }}>
-            {result.map((item, index) => (
+          <ul
+            style={{
+              listStyleType: "none",
+              padding: 0,
+              textAlign: "left",
+              margin: "20px 0",
+            }}
+          >
+            {result.data.map((item, index) => (
               <li
                 key={index}
                 style={{
-                  backgroundColor: "#e9ecef",
-                  margin: "5px 0",
-                  padding: "10px",
-                  borderRadius: "5px",
+                  backgroundColor: "#f0f8ff",
+                  margin: "10px 0",
+                  padding: "15px",
+                  borderRadius: "8px",
+                  boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
                 }}
               >
-                {item.value}
+                <div>
+                  <strong>Value 1:</strong> {item.value1}
+                </div>
+                <div>
+                  <strong>Value 2:</strong> {item.value2}
+                </div>
+                <div>
+                  <strong>Value Z:</strong> {item.ValueZ}
+                </div>
+                <div>
+                  <strong>Relationship:</strong> {item.Relationship}
+                </div>
               </li>
             ))}
           </ul>
         )}
       </div>
       <div style={{ marginTop: "40px", textAlign: "center" }}>
-        <TicTacToe />
+        {!showGame.tictactoe && (
+          <button
+            onClick={toggleGame}
+            style={{
+              marginBottom: "20px",
+              padding: "10px",
+              fontSize: "16px",
+              cursor: "pointer",
+            }}
+          >
+            Play Tic-Tac-Toe
+          </button>
+        )}
+        {showGame.tictactoe && (
+          <>
+            <TicTacToe />
+            <button
+              onClick={toggleGame}
+              style={{
+                marginTop: "20px",
+                padding: "10px",
+                fontSize: "16px",
+                cursor: "pointer",
+              }}
+            >
+              Collapse Tic-Tac-Toe
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
