@@ -86,12 +86,14 @@ const DateQueryApp = () => {
         {buildTimestamp}
       </div>
       <h2 style={{ textAlign: "center", color: "#333" }}>Data Match</h2>
-      <div style={{ marginBottom: "20px", textAlign: "center" }}>
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+      >
         <label style={{ marginRight: "10px", color: "#555" }}>Person 1:</label>
         <select
           value={dates.date1}
           onChange={(e) => handleInputChange(e, "date1")}
-          style={{ marginRight: "10px", padding: "5px" }}
+          style={{ padding: "5px" }}
         >
           <option value=''>Select Date 1</option>
           {date1Options.map((date, index) => (
@@ -100,7 +102,11 @@ const DateQueryApp = () => {
             </option>
           ))}
         </select>
+      </div>
 
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+      >
         <label style={{ marginRight: "10px", color: "#555" }}>Person 2:</label>
         <select
           value={dates.date2}
@@ -115,6 +121,7 @@ const DateQueryApp = () => {
           ))}
         </select>
       </div>
+
       <button
         onClick={handleSubmit}
         style={{
