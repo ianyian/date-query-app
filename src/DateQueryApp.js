@@ -3,7 +3,8 @@ import Papa from "papaparse";
 import dsData from "./ds.csv";
 import TicTacToe from "./TicTacToe";
 
-const buildTimestamp = "Build Version: " + new Date().toLocaleString();
+const buildTimestamp =
+  process.env.REACT_APP_BUILD_TIMESTAMP || "Build Version: Unknown";
 
 const DateQueryApp = () => {
   const [dates, setDates] = useState({ date1: "", date2: "" });
@@ -92,7 +93,7 @@ const DateQueryApp = () => {
         <label style={{ marginRight: "10px", color: "#555" }}>Person 1:</label>
         <select
           value={dates.date1}
-          onChange={(e) => handleInputChange(e, "date1")}
+          onChange={(e) => setDates({ ...dates, date1: e.target.value })}
           style={{ padding: "5px" }}
         >
           <option value=''>Select Date 1</option>
@@ -110,7 +111,7 @@ const DateQueryApp = () => {
         <label style={{ marginRight: "10px", color: "#555" }}>Person 2:</label>
         <select
           value={dates.date2}
-          onChange={(e) => handleInputChange(e, "date2")}
+          onChange={(e) => setDates({ ...dates, date2: e.target.value })}
           style={{ padding: "5px" }}
         >
           <option value=''>Select Date 2</option>
@@ -146,10 +147,6 @@ const DateQueryApp = () => {
         dates.date2 === "" ? (
           <p style={{ color: "#007bff", fontSize: "18px", fontWeight: "bold" }}>
             Ready to go
-          </p>
-        ) : result.data.length === 0 ? (
-          <p style={{ color: "#ff6347", fontSize: "18px", fontWeight: "bold" }}>
-            No matching data found
           </p>
         ) : null}
 
