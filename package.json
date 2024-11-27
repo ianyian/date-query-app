@@ -15,10 +15,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cross-env REACT_APP_BUILD_TIMESTAMP=%DATE% react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prebuild": "node build.js",
+    "prebuild": "node build.js && node set-build-timestamp.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
