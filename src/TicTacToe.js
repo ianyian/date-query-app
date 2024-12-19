@@ -1,34 +1,9 @@
-// good one
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const TicTacToe = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
-  const [showGame, setShowGame] = useState(false);
-
-  const handleClick = (index) => {
-    if (board[index] || calculateWinner(board)) return;
-    const newBoard = board.slice();
-    newBoard[index] = "X";
-    setBoard(newBoard);
-    setIsXNext(false);
-  };
-
-  useEffect(() => {
-    if (!isXNext && !calculateWinner(board)) {
-      const emptyIndices = board
-        .map((value, index) => (value === null ? index : null))
-        .filter((val) => val !== null);
-      if (emptyIndices.length > 0) {
-        const randomIndex =
-          emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
-        const newBoard = board.slice();
-        newBoard[randomIndex] = "O";
-        setBoard(newBoard);
-        setIsXNext(true);
-      }
-    }
-  }, [isXNext, board]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const calculateWinner = (squares) => {
     const lines = [
@@ -54,13 +29,41 @@ const TicTacToe = () => {
     return null;
   };
 
-  const handleReset = () => {
+  const getBestMove = (squares) => {
+    for (let i = 0; i < squares.length; i++) {
+      if (!squares[i]) {
+        return i;
+      }
+    }
+    return null;
+  };
+
+  const handleClick = (index) => {
+    if (board[index] || calculateWinner(board)) return;
+    const newBoard = board.slice();
+    newBoard[index] = "X";
+    setBoard(newBoard);
+    setIsXNext(false);
+
+    if (!calculateWinner(newBoard)) {
+      const computerMove = getBestMove(newBoard);
+      if (computerMove !== null) {
+        newBoard[computerMove] = "O";
+        setTimeout(() => {
+          setBoard(newBoard);
+          setIsXNext(true);
+        }, 500);
+      }
+    }
+  };
+
+  const resetGame = () => {
     setBoard(Array(9).fill(null));
     setIsXNext(true);
   };
 
-  const toggleGame = () => {
-    setShowGame(!showGame);
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   const winner = calculateWinner(board);
@@ -70,25 +73,22 @@ const TicTacToe = () => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <button
-        onClick={toggleGame}
-        style={{
-          marginBottom: "20px",
-          padding: "10px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
-      >
-        {showGame ? "Collapse Game" : "Play Tic-Tac-Toe"}
-      </button>
-      {showGame && (
-        <div>
-          <div style={{ marginBottom: "10px" }}>{status}</div>
+      {!isCollapsed && (
+        <>
+          <div
+            style={{
+              marginBottom: "10px",
+              fontSize: "18px",
+              fontWeight: "bold",
+            }}
+          >
+            {status}
+          </div>
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 100px)",
-              gap: "5px",
+              gap: "10px",
               justifyContent: "center",
             }}
           >
@@ -100,26 +100,50 @@ const TicTacToe = () => {
                   width: "100px",
                   height: "100px",
                   fontSize: "24px",
-                  cursor: "pointer",
+                  cursor: value || winner ? "not-allowed" : "pointer",
+                  backgroundColor: "#f8f9fa",
+                  border: "1px solid #dee2e6",
+                  borderRadius: "5px",
                 }}
+                disabled={value || winner}
               >
                 {value}
               </button>
             ))}
           </div>
-          <button
-            onClick={handleReset}
-            style={{
-              marginTop: "20px",
-              padding: "10px",
-              fontSize: "16px",
-              cursor: "pointer",
-            }}
-          >
-            Reset
-          </button>
-        </div>
+        </>
       )}
+      <div style={{ marginTop: "20px" }}>
+        <button
+          onClick={resetGame}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#28a745",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginRight: "10px",
+          }}
+        >
+          Reset Game
+        </button>
+        <button
+          onClick={toggleCollapse}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {isCollapsed ? "Expand" : "Collapse"}
+        </button>
+      </div>
     </div>
   );
 };

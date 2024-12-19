@@ -37,6 +37,11 @@ const DateQueryApp = () => {
   };
 
   const handleSubmit = () => {
+    if (!dates.date1 || !dates.date2) {
+      setResult({ data: "Please select both dates before submitting." });
+      return;
+    }
+
     Papa.parse(dsData, {
       download: true,
       header: true,
@@ -50,7 +55,9 @@ const DateQueryApp = () => {
         });
 
         console.log("Filtered Data:", filteredData); // Log filtered data to check if the filtering is working
-        setResult({ data: filteredData.length > 0 ? filteredData : [] });
+        setResult({
+          data: filteredData.length > 0 ? filteredData : "No Match",
+        });
       },
       error: (error) => {
         console.error("Error parsing CSV:", error);
@@ -142,48 +149,47 @@ const DateQueryApp = () => {
         <h3 style={{ color: "#007bff", fontSize: "20px", fontWeight: "bold" }}>
           Match Results
         </h3>
-        {result.data.length === 0 &&
-        dates.date1 === "" &&
-        dates.date2 === "" ? (
-          <p style={{ color: "#007bff", fontSize: "18px", fontWeight: "bold" }}>
-            Ready to go
+        {typeof result.data === "string" && (
+          <p style={{ color: "#ff6347", fontSize: "18px", fontWeight: "bold" }}>
+            {result.data}
           </p>
-        ) : null}
-
-        <ul
-          style={{
-            listStyleType: "none",
-            padding: 0,
-            textAlign: "left",
-            margin: "20px 0",
-          }}
-        >
-          {result.data.map((item, index) => (
-            <li
-              key={index}
-              style={{
-                backgroundColor: "#f0f8ff",
-                margin: "10px 0",
-                padding: "15px",
-                borderRadius: "8px",
-                boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <div>
-                <strong>Value 1:</strong> {item.value1}
-              </div>
-              <div>
-                <strong>Value 2:</strong> {item.value2}
-              </div>
-              <div>
-                <strong>Value Z:</strong> {item.ValueZ}
-              </div>
-              <div>
-                <strong>Relationship:</strong> {item.Relationship}
-              </div>
-            </li>
-          ))}
-        </ul>
+        )}
+        {Array.isArray(result.data) && result.data.length > 0 && (
+          <ul
+            style={{
+              listStyleType: "none",
+              padding: 0,
+              textAlign: "left",
+              margin: "20px 0",
+            }}
+          >
+            {result.data.map((item, index) => (
+              <li
+                key={index}
+                style={{
+                  backgroundColor: "#f0f8ff",
+                  margin: "10px 0",
+                  padding: "15px",
+                  borderRadius: "8px",
+                  boxShadow: "0 0 5px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <div>
+                  <strong>Value 1:</strong> {item.value1}
+                </div>
+                <div>
+                  <strong>Value 2:</strong> {item.value2}
+                </div>
+                <div>
+                  <strong>Value Z:</strong> {item.ValueZ}
+                </div>
+                <div>
+                  <strong>Relationship:</strong> {item.Relationship}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div style={{ marginTop: "40px", textAlign: "center" }}>
         {!showGame.tictactoe && (
@@ -202,17 +208,6 @@ const DateQueryApp = () => {
         {showGame.tictactoe && (
           <>
             <TicTacToe />
-            <button
-              onClick={toggleGame}
-              style={{
-                marginTop: "20px",
-                padding: "10px",
-                fontSize: "16px",
-                cursor: "pointer",
-              }}
-            >
-              Collapse Tic-Tac-Toe
-            </button>
           </>
         )}
       </div>
